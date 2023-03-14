@@ -25,5 +25,5 @@ from .serializers import ArticleSerializer
 @api_view(['GET'])
 def article_list_create_api_view(request): 
     articles = Article.objects.filter(status = True)  # nesnelerden oluşan sorgu kümesi | queryset consisting of objects
-    serializer = ArticleSerializer(articles)
+    serializer = ArticleSerializer(articles, many=True)  # Many=True dedik çünkü birden fazla sorgu seti olabilir. | We said many=True because there may be more than one queryset.
     return Response(serializer.data)
