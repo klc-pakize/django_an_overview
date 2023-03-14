@@ -38,7 +38,7 @@ def article_list_create_api_view(request):
     
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def article_detail_list_api_view(request): 
+def article_detail_list_api_view(request, pk): 
     try:
         article_instance = Article.objects.get(pk = pk)
 
