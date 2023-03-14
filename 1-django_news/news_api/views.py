@@ -22,6 +22,48 @@ from rest_framework.decorators import api_view
 from news.models import Article
 from .serializers import ArticleSerializer
 
+from rest_framework.views import APIView
+from rest_framework.generics import get_object_or_404
+class ArticleAPIView(APIView):
+    def get(self, request):
+        articles = Article.objects.filter(status=True)
+        serializer = ArticleSerializer(articles, many = True)
+        return Response(serializer.data)
+    
+    def post(self, request):
+        serializer = ArticleSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class ArticleDetailAPIView(APIView):
+    def get_obj(self, pk):
+        article_instance = get_object_or_404(Article, pk = pk)
+        return article_instance
+    
+    def get(self,request, pk):
+        articles_instance = self.get_obj(pk=pk)
+        serializer = ArticleSerializer(articles_instance)
+        return Response(serializer.data)
+
+    def put(self,request , pk):
+        articles_instance = self.get_obj(pk=pk)
+        serializer = ArticleSerializer(articles_instance, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self,request , pk):
+        articles_instance = self.get_obj(pk=pk)
+        articles_instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+########################## Function Based View ################################
+
 @api_view(['GET', 'POST'])
 def article_list_create_api_view(request): 
     if request.method == 'GET':
