@@ -19,8 +19,8 @@ Thanks to these structures, it allows us to control the requests or responses se
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from news.models import Article
-from .serializers import ArticleSerializer
+from news.models import Article, Journalist
+from .serializers import ArticleSerializer, JournalistSerializer
 
 from rest_framework.views import APIView
 from rest_framework.generics import get_object_or_404
@@ -60,6 +60,21 @@ class ArticleDetailAPIView(APIView):
         articles_instance = self.get_obj(pk=pk)
         articles_instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class JournalistAPIView(APIView):
+    def get(self, request):
+        journalist = Journalist.objects.all()
+        serializer = JournalistSerializer(journalist, many = True)
+        return Response(serializer.data)
+    
+    def post(self, request):
+        serializer = JournalistSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
+    
+    
 
 
 ########################## Function Based View ################################
@@ -115,3 +130,5 @@ def article_detail_list_api_view(request, pk):
             },
             status=status.HTTP_204_NO_CONTENT
         )
+
+

@@ -143,4 +143,4 @@ class JournalistSerializer(serializers.ModelSerializer):
     articles = ArticleSerializer(many = True, read_only=True)
     class Meta:
         model = Journalist
-        fields = ('id','first_name', 'last_name', 'bio')
+        fields = ('id','first_name', 'last_name', 'bio', 'articles')
