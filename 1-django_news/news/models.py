@@ -17,3 +17,7 @@ class Article(models.Model):
         return self.title
     
 
+class Journalist(models.Model):
+    first_name = models.CharField(max_length=120)
+    last_name = models.CharField(max_length=150)
+    bio = models.TextField(blank=True, null=True)
