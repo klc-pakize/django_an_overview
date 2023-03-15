@@ -4,7 +4,7 @@ from django.utils.timesince import timesince
 
 from datetime import datetime, date
 
-from news.models import Article
+from news.models import Article, Journalist
 
 #? Serializer = karmaşık yapıları (JSON, XML vb.) backend olarak kullandığımız python veri yapılarına (dic, tuple, list, set) dönüştürür. Her iki şekilde de çalışır.
 #? Serializer = converts complex structures (JSON, XML etc.) to python data structures (dic, tuple, list, set) that we use to backend. It works both ways.
@@ -110,10 +110,12 @@ To add a field that is not in the model:
 
 Note: this field database is not registered
 """
+
 class ArticleSerializer(serializers.ModelSerializer):
 
     time_since_pub = serializers.SerializerMethodField()
-
+    writer = serializers.StringRelatedField()
+    writer_id = serializers.IntegerField()
     class Meta:
         model = Article
         fields = '__all__'  # Bütün fields alır |  Gets all fields
@@ -136,3 +138,9 @@ class ArticleSerializer(serializers.ModelSerializer):
         if date_data > today:
             raise serializers.ValidationError('publication date forward date cannot be')
         return date_data
+    
+class JournalistSerializer(serializers.ModelSerializer):
+    articles = ArticleSerializer(many = True, read_only=True)
+    class Meta:
+        model = Journalist
+        fields = ('id','first_name', 'last_name', 'bio')
