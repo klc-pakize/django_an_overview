@@ -1,11 +1,15 @@
 from rest_framework import serializers
 
+from django.utils.timesince import timesince
+
+from datetime import datetime, date
+
 from news.models import Article
 
 #? Serializer = karmaşık yapıları (JSON, XML vb.) backend olarak kullandığımız python veri yapılarına (dic, tuple, list, set) dönüştürür. Her iki şekilde de çalışır.
 #? Serializer = converts complex structures (JSON, XML etc.) to python data structures (dic, tuple, list, set) that we use to backend. It works both ways.
 
-class ArticleSerializer(serializers.Serializer):
+class XXArticleSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)  # otomatik olarak oluşur, bu nedenle read_only | occurs automatically so read_only
     writer = serializers.CharField()
     title = serializers.CharField()
@@ -88,3 +92,47 @@ OrderedDict([('writer', 'Pakize Kılıç'), ('title', 'Backend'), ('explanation'
 2
 >>> exit()
 """
+
+
+####################### MODEL SERIALIZERS #################################
+"""
+Modelde olmayan bir field eklemek için:
+1- field_name = serializers.SerializerMethodField()
+
+2- def get_field_name(self, obj)
+
+Not: Bu alan veri tabanına kayıt edilmez
+
+To add a field that is not in the model:
+1- field_name = serializers.SerializerMethodField()
+
+2- def get_field_name(self, obj)
+
+Note: this field database is not registered
+"""
+class ArticleSerializer(serializers.ModelSerializer):
+
+    time_since_pub = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Article
+        fields = '__all__'  # Bütün fields alır |  Gets all fields
+        # exclude = ['id']  # id hariç bütün fields göster | show all fields except id
+        
+
+    def get_time_since_pub(self, obj):
+        now = datetime.now()
+        pub_date = obj.publication_date
+        if obj.status == True:
+            time_delta = timesince(pub_date, now)
+            return time_delta
+        
+        else:
+            return 'Status False'
+        
+        
+    def validate_publication_date(self,date_data ):
+        today = date.today()
+        if date_data > today:
+            raise serializers.ValidationError('publication date forward date cannot be')
+        return date_data
