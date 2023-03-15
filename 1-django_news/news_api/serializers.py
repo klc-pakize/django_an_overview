@@ -43,7 +43,19 @@ class ArticleSerializer(serializers.Serializer):
         instance.save()    
         return instance
     
-
+    #? Bu fonksiyonda valided_data'ya müdahale ettik, tüm sınıfı ilgilendiren nesne seviyesinde bir validasyon yaptık.
+    #? We intervened validated_data in this function, we made an object level validate that concerns the whole class.
+    def validate(self, attrs):
+        if attrs['title'] == attrs['explanation']:
+            raise serializers.ValidationError('Title and description cannot be the same')
+        return attrs
+    
+    #? Alan bazında tek bir field doğrulama işlemi: validate kelimesinden sonra validayson yapılacak field adını belirtmemiz gerekir.
+    #? A single field validation validate operation on a field basis: we have to specify the field name to apply the function name after the word validate.
+    def validate_title(self, value):
+        if len(value) <= 20:
+            raise serializers.ValidationError('The title field must contain at least 20 characters.')
+        return value
 """
 #! Mevcut bir nesneyi Django Shell plus ile JSON formatına dönüştürelim | Let's convert an existing object to JSON format via django shell plus
 >>> from news.models import Article

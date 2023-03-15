@@ -35,7 +35,7 @@ class ArticleAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 
 class ArticleDetailAPIView(APIView):
@@ -54,7 +54,7 @@ class ArticleDetailAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
     def delete(self,request , pk):
         articles_instance = self.get_obj(pk=pk)
