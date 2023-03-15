@@ -76,7 +76,7 @@ class JournalistDetailAPIView(APIView):
 
     def get(self, request, pk):
         journalist = Journalist.objects.get(pk = pk)
-        serializer = JournalistSerializer(journalist)
+        serializer = JournalistSerializer(journalist, context={'request': request})
         return Response(serializer.data)
     
     def put(self, request, pk):

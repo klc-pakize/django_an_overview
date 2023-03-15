@@ -9,5 +9,5 @@ urlpatterns = [
     path("articles", ArticleAPIView.as_view()),
     path("articles/<int:pk>/", ArticleDetailAPIView.as_view()),
     path("journalist", JournalistAPIView.as_view()),
-    path("journalist/<int:pk>/", JournalistDetailAPIView.as_view()),
+    path("journalist/<int:pk>/", JournalistDetailAPIView.as_view(), name='articles_name'),
 ]

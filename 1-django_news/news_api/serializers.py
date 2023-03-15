@@ -140,7 +140,34 @@ class ArticleSerializer(serializers.ModelSerializer):
         return date_data
     
 class JournalistSerializer(serializers.ModelSerializer):
-    articles = ArticleSerializer(many = True, read_only=True)
+    # articles = ArticleSerializer(many = True, read_only=True)
+
+
+    """
+    Bir yazar altında birden fazla makale olabileceği için karmaşık bir yapı elde edebiliyoruz. Daha basit görünmesi için ilgili yazarın yazılarının linklerini incelemek daha sade bir görünüm elde etmemizi sağlıyor, bunu HyperlinkedRelatedField ile yapacağız:
+    1- articles = serializers.HyperlinkedRelatedField(
+         many = True,
+         read_only=True,
+         view_name='articles_name'
+         )
+    2- context={'request': request}
+    3- view_name ve urls.py içindeki ilgili endpoint'in adı aynı olmalıdır.
+
+    Since there may be more than one article under an author, we can obtain a complex structure. Viewing the links of the related author's articles to make it look simpler allows us to get a simpler view, we will do this with HyperlinkedRelatedField:
+    1- articles = serializers.HyperlinkedRelatedField(
+            many = True,
+            read_only=True,
+            view_name='articles_name'
+            )
+    2- context={'request': request}
+    3- The name of the related endpoint in view_name and urls.py must be the same.
+    """
+
+    articles = serializers.HyperlinkedRelatedField(
+        many = True,
+        read_only=True,
+        view_name='articles_name'
+        )
     class Meta:
         model = Journalist
         fields = ('id','first_name', 'last_name', 'bio', 'articles')
