@@ -36,8 +36,6 @@ class ArticleAPIView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-
-
 class ArticleDetailAPIView(APIView):
     def get_obj(self, pk):
         article_instance = get_object_or_404(Article, pk = pk)
@@ -74,7 +72,30 @@ class JournalistAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
     
+class JournalistDetailAPIView(APIView):
+
+    def get(self, request, pk):
+        journalist = Journalist.objects.get(pk = pk)
+        serializer = JournalistSerializer(journalist)
+        return Response(serializer.data)
     
+    def put(self, request, pk):
+        journalist = Journalist.objects.get(pk = pk)
+        serializer = JournalistSerializer(journalist,data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(serf, request, pk):
+        journalist = Journalist.objects.get(pk = pk)
+        journalist.delete()
+        data = {
+            "message":"journalist has been deleted"
+        }
+        return Response(data, status=status.HTTP_204_NO_CONTENT)
+
+
 
 
 ########################## Function Based View ################################
